@@ -5,3 +5,6 @@ telegram:
   bot:
     name:
     token:
+
+  #this is string for environment variables format
+  #telegram.bot.name=NAME;telegram.bot.token=TOKEN
