@@ -16,7 +16,6 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 @Setter
 @RequiredArgsConstructor
 public class Bot extends TelegramLongPollingBot {
-
     private String botUsername;
     private String botToken;
     private final MessageService messageService;
@@ -53,13 +52,11 @@ public class Bot extends TelegramLongPollingBot {
         String chatId = String.valueOf(callbackQuery.getMessage().getChatId());
 
         switch (callbackQuery.getData()) {
-            case "/INSERT LINK HERE 1" -> {
-                sendTextMessage(chatId,"INSERT TEXT HERE 1");
-            }
+            case "/INSERT LINK HERE 1" -> sendTextMessage(chatId,"INSERT TEXT HERE 1");
 
-            case "/INSERT LINK HERE 2" -> {
-                sendTextMessage(chatId, "INSERT TEXT HERE 2");
-            }
+            case "/INSERT LINK HERE 2" -> sendTextMessage(chatId, "INSERT TEXT HERE 2");
+            default ->
+                throw new IllegalStateException("Unexpected value: " + callbackQuery.getData());
         }
     }
 
