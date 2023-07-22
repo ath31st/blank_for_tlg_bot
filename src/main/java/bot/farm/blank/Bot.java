@@ -1,6 +1,6 @@
-package bot.farm.redeemer;
+package bot.farm.blank;
 
-import bot.farm.redeemer.service.BotService;
+import bot.farm.blank.service.BotService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,4 +51,35 @@ public class Bot extends TelegramLongPollingBot {
       }
     }
   }
+
+//  private void messageProcessing(Message message) {
+//    String chatId = String.valueOf(message.getChatId());
+//    String inputText = message.getText();
+//
+//    sendTextMessage(chatId, inputText); // change here send text!
+//  }
+
+//  private void callBackQueryProcessing(CallbackQuery callbackQuery) {
+//    String chatId = String.valueOf(callbackQuery.getMessage().getChatId());
+//
+//    switch (callbackQuery.getData()) {
+//      case "/INSERT LINK HERE 1" -> sendTextMessage(chatId, "INSERT TEXT HERE 1");
+//
+//      case "/INSERT LINK HERE 2" -> sendTextMessage(chatId, "INSERT TEXT HERE 2");
+//      default -> throw new IllegalStateException("Unexpected value: " + callbackQuery.getData());
+//    }
+//  }
+
+
+//  public void sendTextMessage(String chatId, String text) {
+//    try {
+//      execute(messageService.createMessage(chatId, text));
+//    } catch (TelegramApiException e) {
+//      if (e.getMessage().endsWith("[403] Forbidden: bot was blocked by the user")) {
+//        log.info("User with chatId {} has received the \"inactive\" status", chatId);
+//      } else {
+//        log.error(e.getMessage());
+//      }
+//    }
+//  }
 }

@@ -1,4 +1,4 @@
-package bot.farm.redeemer.service;
+package bot.farm.blank.service;
 
 import java.util.ArrayList;
 import java.util.List;
