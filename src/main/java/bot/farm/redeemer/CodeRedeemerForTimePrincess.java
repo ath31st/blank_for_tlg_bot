@@ -1,13 +1,12 @@
-package bot.farm.blank;
+package bot.farm.redeemer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BlankForTheTlgBotApplication {
+public class CodeRedeemerForTimePrincess {
 
   public static void main(String[] args) {
-    SpringApplication.run(BlankForTheTlgBotApplication.class, args);
+    SpringApplication.run(CodeRedeemerForTimePrincess.class, args);
   }
-
 }

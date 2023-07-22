@@ -1,10 +1,10 @@
-package bot.farm.blank;
+package bot.farm.redeemer;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BlankForTheTlgBotApplicationTests {
+class CodeRedeemerForTimePrincessTests {
 
     @Test
     void contextLoads() {

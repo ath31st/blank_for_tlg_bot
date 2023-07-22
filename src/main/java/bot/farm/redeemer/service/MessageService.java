@@ -1,4 +1,4 @@
-package bot.farm.blank.service;
+package bot.farm.redeemer.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
