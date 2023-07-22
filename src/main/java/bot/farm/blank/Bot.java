@@ -1,27 +1,28 @@
 package bot.farm.blank;
 
 import bot.farm.blank.service.BotService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @Slf4j
-@Getter
-@Setter
+@Service
 @RequiredArgsConstructor
 public class Bot extends TelegramLongPollingBot {
-  private String botUsername;
+  @Value("${telegram.bot.name}")
+  private String botName;
+  @Value("${telegram.bot.token}")
   private String botToken;
   private final BotService botService;
 
   @Override
   public String getBotUsername() {
-    return botUsername;
+    return botName;
   }
 
   @Override
