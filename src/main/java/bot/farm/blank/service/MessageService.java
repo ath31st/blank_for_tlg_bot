@@ -10,10 +10,16 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 @RequiredArgsConstructor
 public class MessageService {
   public SendMessage createMessage(long chatId, String text) {
-    return SendMessage
+    SendMessage message = SendMessage
         .builder()
         .chatId(chatId)
         .text(text)
         .build();
+
+    message.enableMarkdownV2(true);
+    message.disableNotification(); // if it needed
+    message.enableHtml(true);
+
+    return message;
   }
 }
