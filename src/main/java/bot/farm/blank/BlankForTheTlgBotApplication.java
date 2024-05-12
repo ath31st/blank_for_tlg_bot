@@ -9,5 +9,4 @@ public class BlankForTheTlgBotApplication {
   public static void main(String[] args) {
     SpringApplication.run(BlankForTheTlgBotApplication.class, args);
   }
-
 }
