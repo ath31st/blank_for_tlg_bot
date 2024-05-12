@@ -1,6 +1,7 @@
 package bot.farm.blank;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsumer;
@@ -17,7 +18,7 @@ public class Bot implements SpringLongPollingBot, LongPollingSingleThreadUpdateC
   private final TelegramClient telegramClient;
   private final String botToken;
 
-  public Bot(String botToken) {
+  public Bot(@Value("${telegram.bot.token}") String botToken) {
     this.botToken = botToken;
     this.telegramClient = new OkHttpTelegramClient(this.botToken);
   }
