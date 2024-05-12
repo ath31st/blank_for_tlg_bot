@@ -1,5 +1,6 @@
 package bot.farm.blank;
 
+import bot.farm.blank.service.KeyboardService;
 import bot.farm.blank.service.MessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,6 +9,7 @@ import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsumer;
 import org.telegram.telegrambots.longpolling.starter.SpringLongPollingBot;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
@@ -18,10 +20,14 @@ public class Bot implements SpringLongPollingBot, LongPollingSingleThreadUpdateC
   private final TelegramClient telegramClient;
   private final String botToken;
   private final MessageService messageService;
+  private final KeyboardService keyboardService;
 
-  public Bot(@Value("${telegram.bot.token}") String botToken, MessageService messageService) {
+  public Bot(@Value("${telegram.bot.token}") String botToken,
+             MessageService messageService,
+             KeyboardService keyboardService) {
     this.botToken = botToken;
     this.messageService = messageService;
+    this.keyboardService = keyboardService;
     this.telegramClient = new OkHttpTelegramClient(this.botToken);
   }
 
@@ -41,7 +47,11 @@ public class Bot implements SpringLongPollingBot, LongPollingSingleThreadUpdateC
       long chatId = update.getMessage().getChatId();
       String text = update.getMessage().getText();
       try {
-        telegramClient.execute(messageService.createMessage(chatId, text));
+        SendMessage sendMessage = messageService.createMessage(chatId,text);
+        sendMessage.enableMarkdown(true);
+        sendMessage.setReplyMarkup(keyboardService.createInlineKeyboardMarkup());
+        
+        telegramClient.execute(sendMessage);
       } catch (TelegramApiException e) {
         e.printStackTrace();
       }
