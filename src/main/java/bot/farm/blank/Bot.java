@@ -1,28 +1,25 @@
 package bot.farm.blank;
 
-import bot.farm.blank.service.BotService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
+import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsumer;
+import org.telegram.telegrambots.longpolling.starter.SpringLongPollingBot;
+import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 @Slf4j
-@Service
-@RequiredArgsConstructor
-public class Bot extends TelegramLongPollingBot {
-  @Value("${telegram.bot.name}")
-  private String botName;
-  @Value("${telegram.bot.token}")
-  private String botToken;
-  private final BotService botService;
+@Component
+public class Bot implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
+  private final TelegramClient telegramClient;
+  private final String botToken;
 
-  @Override
-  public String getBotUsername() {
-    return botName;
+  public Bot(String botToken) {
+    this.botToken = botToken;
+    this.telegramClient = new OkHttpTelegramClient(this.botToken);
   }
 
   @Override
@@ -31,55 +28,28 @@ public class Bot extends TelegramLongPollingBot {
   }
 
   @Override
-  public void onUpdateReceived(Update update) {
-    SendMessage sendMsg = null;
+  public LongPollingUpdateConsumer getUpdatesConsumer() {
+    return this;
+  }
+
+  @Override
+  public void consume(Update update) {
+    // We check if the update has a message and the message has text
     if (update.hasMessage() && update.getMessage().hasText()) {
-      sendMsg = botService.handleMessage(update.getMessage());
-    }
+      // Set variables
+      String message_text = update.getMessage().getText();
+      long chat_id = update.getMessage().getChatId();
 
-    if (update.hasCallbackQuery()) {
-      sendMsg = botService.handleCallback(update.getCallbackQuery());
-    }
-
-    try {
-      execute(sendMsg);
-    } catch (TelegramApiException e) {
-      if (e.getMessage().endsWith("[403] Forbidden: bot was blocked by the user")) {
-        log.info("User with chatId {} has received the \"inactive\" status", sendMsg.getChatId());
-      } else {
-        log.error(e.getMessage());
+      SendMessage message = SendMessage // Create a message object
+          .builder()
+          .chatId(chat_id)
+          .text(message_text)
+          .build();
+      try {
+        telegramClient.execute(message); // Sending our message object to user
+      } catch (TelegramApiException e) {
+        e.printStackTrace();
       }
     }
   }
-
-//  private void messageProcessing(Message message) {
-//    String chatId = String.valueOf(message.getChatId());
-//    String inputText = message.getText();
-//
-//    sendTextMessage(chatId, inputText); // change here send text!
-//  }
-
-//  private void callBackQueryProcessing(CallbackQuery callbackQuery) {
-//    String chatId = String.valueOf(callbackQuery.getMessage().getChatId());
-//
-//    switch (callbackQuery.getData()) {
-//      case "/INSERT LINK HERE 1" -> sendTextMessage(chatId, "INSERT TEXT HERE 1");
-//
-//      case "/INSERT LINK HERE 2" -> sendTextMessage(chatId, "INSERT TEXT HERE 2");
-//      default -> throw new IllegalStateException("Unexpected value: " + callbackQuery.getData());
-//    }
-//  }
-
-
-//  public void sendTextMessage(String chatId, String text) {
-//    try {
-//      execute(messageService.createMessage(chatId, text));
-//    } catch (TelegramApiException e) {
-//      if (e.getMessage().endsWith("[403] Forbidden: bot was blocked by the user")) {
-//        log.info("User with chatId {} has received the \"inactive\" status", chatId);
-//      } else {
-//        log.error(e.getMessage());
-//      }
-//    }
-//  }
 }
