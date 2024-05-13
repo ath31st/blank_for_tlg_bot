@@ -10,6 +10,7 @@ import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsume
 import org.telegram.telegrambots.longpolling.starter.SpringLongPollingBot;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
@@ -54,6 +55,25 @@ public class Bot implements SpringLongPollingBot, LongPollingSingleThreadUpdateC
         telegramClient.execute(sendMessage);
       } catch (TelegramApiException e) {
         e.printStackTrace();
+      }
+    } else if (update.hasCallbackQuery()) {
+      // Set variables
+      long chatId = update.getCallbackQuery().getMessage().getChatId();
+      String callData = update.getCallbackQuery().getData();
+      long messageId = update.getCallbackQuery().getMessage().getMessageId();
+
+      if (callData.equals("update_msg_text")) {
+        String answer = "Updated message text";
+        EditMessageText newMessage = EditMessageText.builder()
+            .chatId(chatId)
+            .messageId(Math.toIntExact(messageId))
+            .text(answer)
+            .build();
+        try {
+          telegramClient.execute(newMessage);
+        } catch (TelegramApiException e) {
+          e.printStackTrace();
+        }
       }
     }
   }

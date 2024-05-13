@@ -18,7 +18,7 @@ public class KeyboardService {
             new InlineKeyboardRow(InlineKeyboardButton
                 .builder()
                 .text("Update message text")
-                .callbackData("/update_msg_text")
+                .callbackData("update_msg_text")
                 .build()
             )
         )
