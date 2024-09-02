@@ -2,8 +2,8 @@ package bot.farm.blank;
 
 import bot.farm.blank.service.KeyboardService;
 import bot.farm.blank.service.MessageService;
+import io.github.cdimascio.dotenv.Dotenv;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsumer;
@@ -23,10 +23,8 @@ public class Bot implements SpringLongPollingBot, LongPollingSingleThreadUpdateC
   private final MessageService messageService;
   private final KeyboardService keyboardService;
 
-  public Bot(@Value("${telegram.bot.token}") String botToken,
-             MessageService messageService,
-             KeyboardService keyboardService) {
-    this.botToken = botToken;
+  public Bot(Dotenv dotenv, MessageService messageService, KeyboardService keyboardService) {
+    this.botToken = dotenv.get("BOT_TOKEN");
     this.messageService = messageService;
     this.keyboardService = keyboardService;
     this.telegramClient = new OkHttpTelegramClient(this.botToken);
@@ -48,13 +46,13 @@ public class Bot implements SpringLongPollingBot, LongPollingSingleThreadUpdateC
       long chatId = update.getMessage().getChatId();
       String text = update.getMessage().getText();
       try {
-        SendMessage sendMessage = messageService.createMessage(chatId,text);
+        SendMessage sendMessage = messageService.createMessage(chatId, text);
         sendMessage.enableMarkdown(true);
         sendMessage.setReplyMarkup(keyboardService.createInlineKeyboardMarkup());
-        
+
         telegramClient.execute(sendMessage);
       } catch (TelegramApiException e) {
-        e.printStackTrace();
+        log.error(e.getMessage());
       }
     } else if (update.hasCallbackQuery()) {
       // Set variables
@@ -72,7 +70,7 @@ public class Bot implements SpringLongPollingBot, LongPollingSingleThreadUpdateC
         try {
           telegramClient.execute(newMessage);
         } catch (TelegramApiException e) {
-          e.printStackTrace();
+          log.error(e.getMessage());
         }
       }
     }
